@@ -410,3 +410,9 @@ add_action( 'admin_print_scripts-edit.php', 'gutenberg_replace_default_add_new_b
 function gutenberg_add_admin_body_class( $classes ) {
 	return "$classes gutenberg-editor-page";
 }
+
+function gutenberg_embed_dont_make_links( $output, $url ) {
+	return false;
+}
+
+//add_filter( 'embed_maybe_make_link', 'gutenberg_embed_dont_make_links', 10, 2 );

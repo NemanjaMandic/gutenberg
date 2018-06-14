@@ -1,0 +1,17 @@
+.wp-block-link-preview {
+	display: flex;
+	.wp-block-link-preview__textinfo {
+		flex-grow: 2;
+		.wp-block-link-preview__url {
+			font-style: italic;
+		}
+	}
+	.wp-block-link-preview__image {
+		width: 200px;
+		margin-left: 16px;
+		img {
+			max-width: 200px;
+			max-height: 200px;
+		}
+	}
+}

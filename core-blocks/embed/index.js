@@ -13,7 +13,7 @@ import classnames from 'classnames';
 import { __, sprintf } from '@wordpress/i18n';
 import { Component, Fragment, renderToString } from '@wordpress/element';
 import { Button, Placeholder, Spinner, SandBox } from '@wordpress/components';
-import { createBlock } from '@wordpress/blocks';
+import { createBlock, getBlockAttributes, getBlockType } from '@wordpress/blocks';
 import {
 	BlockControls,
 	BlockAlignmentToolbar,
@@ -154,6 +154,10 @@ function getEmbedBlockSettings( { title, description, icon, category = 'embed', 
 							// because not all embed code gives us a provider name.
 							const { html, provider_name: providerName } = obj;
 							const providerNameSlug = kebabCase( toLower( '' !== providerName ? providerName : title ) );
+
+							// oEmebed's default link fallback. This means it couldn't be embedded.
+							const oEmbedLinkFallback = `<a href="${ url }">${ url }</a>`;
+
 							// This indicates it's a WordPress embed, there aren't a set of URL patterns we can use to match WordPress URLs.
 							if ( includes( html, 'class="wp-embedded-content" data-secret' ) ) {
 								type = 'wp-embed';
@@ -163,15 +167,21 @@ function getEmbedBlockSettings( { title, description, icon, category = 'embed', 
 									return;
 								}
 							}
-							if ( html ) {
+							// Preview block for oEmbed unsupported URLs (again, no patterns can match these)
+							if ( includes( html, 'class="wp-block-link-preview"' ) ) {
+								const linkPreview = getBlockType( 'core/link-preview' );
+								this.props.onReplace( createBlock( 'core/link-preview', { url: url } ) );
+								return;
+							}
+							if ( html !== oEmbedLinkFallback ) {
 								this.setState( { html, type, providerNameSlug } );
 								setAttributes( { type, providerNameSlug } );
 							} else if ( 'photo' === type ) {
 								this.setState( { html: this.getPhotoHtml( obj ), type, providerNameSlug } );
 								setAttributes( { type, providerNameSlug } );
 							} else {
-								// No html, no custom type that we support, so show the error state.
-								this.setState( { error: true } );
+								// No html, no custom type that we support, replace with a link-preview block
+								this.props.onReplace( createBlock( 'core/link-preview', { url } ) );
 							}
 							this.setState( { fetching: false } );
 						},

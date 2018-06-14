@@ -26,6 +26,7 @@ import * as embed from './embed';
 import * as freeform from './freeform';
 import * as html from './html';
 import * as latestPosts from './latest-posts';
+import * as linkPreview from './link-preview';
 import * as list from './list';
 import * as more from './more';
 import * as nextpage from './nextpage';
@@ -66,6 +67,7 @@ export const registerCoreBlocks = () => {
 		freeform,
 		html,
 		latestPosts,
+		linkPreview,
 		more,
 		nextpage,
 		preformatted,
